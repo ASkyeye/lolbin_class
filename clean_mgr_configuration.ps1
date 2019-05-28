@@ -22,7 +22,7 @@ function Add-DiskCleanupHKLM {
 function Add-DiskCleanupHKCU {
     $guid='{4f53c83a-900f-4ed9-902b-7a59a67747ed}'
     new-item -name $guid -Path 'HKCU:\SOFTWARE\Classes\CLSID\' 
-    new-item -name InProcServer32 -Path "HKCU:\SOFTWARE\Classes\CLSID\$guid" -value 'c:\tools\pentestlab64.dll'
+    new-item -name InProcServer32 -Path "HKCU:\SOFTWARE\Classes\CLSID\$guid" -value 'c:\tools\pentestlab.dll'
     New-ItemProperty -name 'ThreadingModel' -path "HKCU:\SOFTWARE\Classes\CLSID/$guid/InProcServer32" -value 'Apartment'
 }
 
