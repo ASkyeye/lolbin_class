@@ -1,0 +1,11 @@
+adduser alex
+usermod -aG sudo alex
+apt-get update
+apt-get install apache2
+mkdir /var/www/webdav
+chown -R www-data:www-data /var/www
+a2enmod dav
+a2enmod dav_fs
+vi /etc/apache2/sites-available/000-default.conf
+service apache2 restart
+echo "this is a sample text file" | sudo tee -a /var/www/webdav/sample.txt
